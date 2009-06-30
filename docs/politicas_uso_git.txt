@@ -1,0 +1,157 @@
+Título: Políticas de uso do repositório git
+
+Autor: Anderson Goulart
+Data da última alteração: 24/03/2009
+
+
+1. Objetivo deste documento
+
+- Estabelecer as normas para acesso e uso do repositório de dados GIT em git.juntadados.org
+- Aprestar a estrutura dos repositórios criados dentro do projeto juntadados.org
+- Mostrar como fazer commits, branches e criar novos projetos.
+
+
+2. Introdução
+
+GIT é um sistema de controle de versão distribuído utilizado para controlar alterações nos arquivos, mais comummente arquivos texto ou códigos-fonte de programas. Seu modelo distribuído permite que várias pessoas trabalhem em seus repositórios fazendo commits e branches sem necessitar de acesso ao servidor de onde foi clonado. Isso garante um modelo de colaboração independente, simples e eficaz. 
+
+
+3. O repositório git.juntadados.org
+
+Definimos uma estrutura para armazenamento dos nossos repositórios dentro do endereço http://git.juntadados.org. Este site aponta para o sistema GITWeb que oferece aos usuários uma interface simples para acesso a todos os projetos e sub-projetos criados. Através desta interface é possível obter uma série de informações, a saber:
+
+- Nome do projeto
+- Sumário
+- Descrição
+- Logs dos commits
+- Datas de alteração
+- Histórico de modificações
+- Árvore de alterações e diffs
+- Snapshots em .tar.gz de algum commit
+
+Atualmente temos os seguintes repositórios no site:
+docs.git -> Documentos e especificações do projeto juntadados.org
+openticket.git -> Sistema de controle de diárias e passagens construído em conjunto com o Cultura Digital
+
+Para fazer o download desses repositórios basta fazer:
+
+$ git clone http://git.juntadados.org/nome_projeto.git
+
+Exemplo:
+
+$ git clone http://git.juntadados.org/docs.git
+
+
+4. Fazendo alterações nos arquivos
+
+Qualquer alteração nos arquivos pode ser realizada a qualquer instante por qualquer desenvolvedor. Não há como "travar" o servidor para que apenas uma pessoa faça a alteração e, por isso, manter binários no SCM é sempre um problema e deve ser evitado. Essa é a filosofia do modelo de desenvolvimento distribuído. Entretanto, algumas regras devem sem seguidas para evitar problemas de merges futuros.
+
+Listo abaixo alguns elementos direcionadores para seu trabalho:
+
+	4.1 Crie um branch da árvore original (master) e trabalhe nele. Isso evita problemas de merge caso todos estejam trabalhando no mesmo ponto. Com os branches fica mais simples gerar diffs e patches a partir de um certo ponto e possibilita fazer rebase facilmente.
+
+Os comandos abaixo criam o branch e vão para ele, respectivamente:
+$ git branch meu_branch
+$ git checkout meu_branch
+
+	4.2 Faça um patch
+
+Neste exemplo faremos um patch do repositório principal (master) com seu novo branch, chamado de "tubos"
+
+$ git-format-patch master..tubos
+
+Isto irá gerar um arquivo do tipo 0001-xxxxx.patch. Este arquivo poderá ser enviado para a lista, para algum dos responsáveis pelos repositórios oficiais ou para algum amigo legal. Para aplicar este patch em algum de seus branches ou do seu amigo basta fazer:
+
+$ git apply 0001-xxxx.patch
+
+
+	4.3 Compartilhe o seu repositório
+
+Qualquer pessoa pode compartilhar se repositório com seus branches e suas alterações realizadas. Essas alterações podem ser incorporadas por qualquer pessoa em qualquer ponto da árvore que o desenvedor deseja. Esta flexibilidade pode trazer confusões iniciais, mas cria N possibilidades de manipulação dos commits. 
+
+Para compartilhar seus repositórios git
+
+$ git daemon --export-all
+
+Após exportar seus arquivos, por favor, nos indique a URL do seu repositório do tipo (git://ip_publico/caminho/do/repositorio). Caso você esteja atrás de um NAT, utilize seus conhecimentos de rede para redirecionamento de portas ou pergunte na lista como fazê-lo.
+
+
+5. Criando um novo projeto
+
+Qualquer pessoa pode criar um novo projeto ou sub-projeto. Para facilitar a navegação nos logs e commits dos repositórios, cada novo módulo ou sistema ou sub-sistema, deverá estar em um repositório separado. Essa noção de sistema ou sub-sistema deve ser encarada como coisas que podem e devem estar separadas. Qualquer dúvida sobre isso envie emails para devel@listas.juntadados.org.
+
+Para cada novo projeto, crie um diretório com um novo pequeno e interessante nome como no exemplo
+
+$ mkdir juntatudo
+$ cd juntatudo
+$ git init
+
+Pronto. Seu diretório já está sendo controlado pelo git. Veja no tutorial do GIT como prosseguir com o uso da ferramenta.
+
+
+6. Atualizando o seu projeto com o do servidor principal e vice-versa
+
+Há duas situações importantes que devem ser trabalhadas separadamente:
+
+6.1 Atualizando seu repositório local com as informações novas no servidor
+
+Existem várias formas de atualizar seu repositório, as quais fogem do escopo deste documento. Consulte o manual do GIT para mais informações. Entretanto, o comando que atualiza seu repositório de acordo com a origem (servidor de onde ele veio) é o seguinte:
+
+$ git fetch
+$ git pull
+
+O primeiro comando conecta na origem e vê quais são as alterações. O segundo aplica as alterações sobre o seu repositório, fazendo um merge. Qualquer conflito será informado pelo GIT e deverá ser tratado manualmente por você.
+
+7. Responsáveis pelo servidor
+
+Dar acesso de escrita aos servidores do projeto requer uma confiança e boa habilidade técnica. Portanto o acesso será restrito atualmente aos seguintes membros:
+
+- Anderson Goulart (global) <global@codekab.com>
+- Marcelo Souza <marcelo.souza@gmail.com>
+- José Augusto Carvalho <guto@gutocarvalho.net>
+
+Entre em contato com algum desses desenvolvedores caso queira publicar o seu trabalho ou através da lista devel@listas.juntadados.org
+
+
+Referências
+
+GIT Tutorial - http://www.kernel.org/pub/software/scm/git/docs/gittutorial.html
+	Em pt_BR: http://git.juntadados.org/?p=docs.git;a=blob_plain;f=gittutorial.txt;hb=74d8a6cf165100f5e211167e84f0ca8ff23bf163
+
+GIT User's Manual - http://www.kernel.org/pub/software/scm/git/docs/user-manual.html
+
+
+Apêndice A - FAQ - Perguntas mais frequentes
+
+1. Como acessar o repositório de dados?
+
+Todos os repositórios estão disponíveis via web através do endereço:
+http://git.juntadados.org
+
+Cada projeto possui um nome dentro do site acima. Desta forma, cada projeto poderá ser copiado (clonado) para sua pasta como no exemplo abaixo:
+
+$ mkdir xemele
+$ cd xemele
+$ git clone http://git.juntadados.org/docs.git
+
+2 Como instalar o GIT em um ambiente Debian GNU/Linux ou similar?
+
+# aptitude install git-core
+
+3. Como atualizar meu repositório com a base central?
+
+Entre no diretório do projeto e execute o comando
+
+$ git fetch
+$ git pull
+
+
+Apêndice B - Glossário
+
+repositório - conjunto de dados (arquivos, diretório, índices) 
+commit - ato de salvar as alterações feitas dentro do sistema de controle de versão; um commit é representado por um hash SHA. 
+clone - ato de copiar um repositório
+branch - uma cópia de um ponto no histórico; um clone de um certo ponto para realizar alterações
+tag - marcação de um ponto no histórico para facilitar sua localização. Marca um commit
+merge - junção de um ou mais pontos da árvore de commits/branches
+rebase - redirecionar os commits locais para um upstream atualizado; isso significa salvar os seus commits, atualizar seu repositório com algum mais novo e reaplicar os seus commits em cima desse novo ponto de trabalho
